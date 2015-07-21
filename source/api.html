@@ -87,7 +87,7 @@
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
 <li><a class="reference internal" href="#">API Reference</a><ul>
-<li><a class="reference internal" href="#metatlas">Metatlas</a></li>
+<li><a class="reference internal" href="#module-metatlas">Metatlas</a></li>
 <li><a class="reference internal" href="#module-metatlas.metatlas_objects">Metatlas Objects</a></li>
 </ul>
 </li>
@@ -139,7 +139,7 @@
       <div class="col-md-3">
         <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
 <li><a class="reference internal" href="#">API Reference</a><ul>
-<li><a class="reference internal" href="#metatlas">Metatlas</a></li>
+<li><a class="reference internal" href="#module-metatlas">Metatlas</a></li>
 <li><a class="reference internal" href="#module-metatlas.metatlas_objects">Metatlas Objects</a></li>
 </ul>
 </li>
@@ -151,8 +151,297 @@
       
   <div class="section" id="api-reference">
 <h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="metatlas">
-<h2>Metatlas<a class="headerlink" href="#metatlas" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-metatlas">
+<span id="metatlas"></span><h2>Metatlas<a class="headerlink" href="#module-metatlas" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="metatlas.mzml_to_hdf">
+<code class="descclassname">metatlas.</code><code class="descname">mzml_to_hdf</code><span class="sig-paren">(</span><em>in_file_name</em>, <em>out_file_name=None</em>, <em>debug=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metatlas/mzml_loader.html#mzml_to_hdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metatlas.mzml_to_hdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts in_file (mzml) to binary and stores it in out_file</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="metatlas.get_data">
+<code class="descclassname">metatlas.</code><code class="descname">get_data</code><span class="sig-paren">(</span><em>h5file</em>, <em>ms_level</em>, <em>polarity</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metatlas/h5_query.html#get_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metatlas.get_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get raw data from an h5file meeting given criteria.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>ms_level</strong> : int</p>
+<blockquote>
+<div><p>MS Level.</p>
+</div></blockquote>
+<p><strong>polarity</strong> : int</p>
+<blockquote>
+<div><p>Plus proton (1) or Minus proton (0).</p>
+</div></blockquote>
+<p><strong>**kwargs</strong></p>
+<blockquote>
+<div><p>Optional search modifiers.  (e.g. min_r=0, max_mz=100, precursor_MZ=1)</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> : dictionary</p>
+<blockquote class="last">
+<div><p>Dictionary with arrays for &#8216;i&#8217;, &#8216;mz&#8217;, and &#8216;rt&#8217; values meeting criteria.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="metatlas.get_XIC">
+<code class="descclassname">metatlas.</code><code class="descname">get_XIC</code><span class="sig-paren">(</span><em>h5file</em>, <em>min_mz</em>, <em>max_mz</em>, <em>ms_level</em>, <em>polarity</em>, <em>bins=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metatlas/h5_query.html#get_XIC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metatlas.get_XIC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get Extracted-ion chromatogram (XIC) data - RT vs. cum sum of intensities</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>h5file</strong> : table file handle</p>
+<blockquote>
+<div><p>Handle to an open tables file.</p>
+</div></blockquote>
+<p><strong>min_mz</strong> : float</p>
+<blockquote>
+<div><p>Minimum m/z value.</p>
+</div></blockquote>
+<p><strong>max_mz</strong> : float</p>
+<blockquote>
+<div><p>Maximum m/z value.</p>
+</div></blockquote>
+<p><strong>ms_level</strong> : int</p>
+<blockquote>
+<div><p>MS Level.</p>
+</div></blockquote>
+<p><strong>polarity: int</strong></p>
+<blockquote>
+<div><p>Plus proton (1) or Minus proton (0).</p>
+</div></blockquote>
+<p><strong>bins</strong> : int or array-like, optional.</p>
+<blockquote>
+<div><p>Desired bins to use for the histogram, defaults to unique retention
+times.</p>
+</div></blockquote>
+<p><strong>**kwargs</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>Optional search modifiers.  (e.g. precursor_MZ=1,</dt>
+<dd><p class="first last">min_collision_energy=4)</p>
+</dd>
+</dl>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> : tuple of arrays</p>
+<blockquote class="last">
+<div><p>(rt_vals, i_vals) arrays in the desired range.  The intensities are
+scaled to [0, 100].</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="metatlas.get_heatmap">
+<code class="descclassname">metatlas.</code><code class="descname">get_heatmap</code><span class="sig-paren">(</span><em>h5file</em>, <em>mz_bins</em>, <em>rt_bins</em>, <em>ms_level</em>, <em>polarity</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metatlas/h5_query.html#get_heatmap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metatlas.get_heatmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a HeatMap of RT vs MZ.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>h5file</strong> : table file handle</p>
+<blockquote>
+<div><p>Handle to an open tables file.</p>
+</div></blockquote>
+<p><strong>mz_steps</strong> : int or array-like</p>
+<blockquote>
+<div><p>Bins to use for the mz axis.</p>
+</div></blockquote>
+<p><strong>rt_steps</strong> : int or array-like</p>
+<blockquote>
+<div><p>Bins to use for the rt axis.</p>
+</div></blockquote>
+<p><strong>ms_level</strong> : int</p>
+<blockquote>
+<div><p>MS Level.</p>
+</div></blockquote>
+<p><strong>polarity: int</strong></p>
+<blockquote>
+<div><p>Plus proton (1) or Minus proton (0).</p>
+</div></blockquote>
+<p><strong>**kwargs</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>Optional search modifiers.  (e.g. precursor_MZ=1,</dt>
+<dd><p class="first last">min_collision_energy=4)</p>
+</dd>
+</dl>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> : dict</p>
+<blockquote class="last">
+<div><p>Dictionary containing: &#8216;arr&#8217;, &#8216;rt_bins&#8217;, &#8216;mz_bins&#8217;.  We return a log
+scaled output array.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="metatlas.get_spectrogram">
+<code class="descclassname">metatlas.</code><code class="descname">get_spectrogram</code><span class="sig-paren">(</span><em>h5file</em>, <em>min_rt</em>, <em>max_rt</em>, <em>ms_level</em>, <em>polarity</em>, <em>bins=2000</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metatlas/h5_query.html#get_spectrogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metatlas.get_spectrogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get cumulative I vs MZ in RT Range (spectrogram)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>h5file</strong> : table file handle</p>
+<blockquote>
+<div><p>Handle to an open tables file.</p>
+</div></blockquote>
+<p><strong>min_rt</strong> : float</p>
+<blockquote>
+<div><p>Minimum retention time.</p>
+</div></blockquote>
+<p><strong>max_rt</strong> : float</p>
+<blockquote>
+<div><p>Maximum retention time.</p>
+</div></blockquote>
+<p><strong>ms_level</strong> : int</p>
+<blockquote>
+<div><p>MS Level.</p>
+</div></blockquote>
+<p><strong>polarity: int</strong></p>
+<blockquote>
+<div><p>Plus proton (1) or Minus proton (0).</p>
+</div></blockquote>
+<p><strong>bins</strong> : int or array-like</p>
+<blockquote>
+<div><p>Desired bins for the histogram.</p>
+</div></blockquote>
+<p><strong>**kwargs</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>Optional search modifiers.  (e.g. precursor_MZ=1,</dt>
+<dd><p class="first last">min_collision_energy=4)</p>
+</dd>
+</dl>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> : tuple of arrays</p>
+<blockquote class="last">
+<div><p>(mz_vals, i_vals) arrays in the desired range.  The intensities are
+scaled to [0, 100].</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="metatlas.plot_heatmap">
+<code class="descclassname">metatlas.</code><code class="descname">plot_heatmap</code><span class="sig-paren">(</span><em>arr</em>, <em>rt_bins</em>, <em>mz_bins</em>, <em>title='HeatMap for Sample'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metatlas/h5_query.html#plot_heatmap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metatlas.plot_heatmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots the given numpy array in pyplot on a log scale (in the given format)
+and returns the image.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>arr</strong> : array</p>
+<blockquote>
+<div><p>Array returned by get_HeatMapRTMZ (typically a slice).</p>
+</div></blockquote>
+<p><strong>rt_bins</strong> : array-like</p>
+<blockquote>
+<div><p>Selected bins on the rt axis (typically a slice).</p>
+</div></blockquote>
+<p><strong>mz_bins</strong> : array-like</p>
+<blockquote>
+<div><p>Selected bins on the mz axis (typically a slice).</p>
+</div></blockquote>
+<p><strong>title</strong> : str, optional</p>
+<blockquote>
+<div><p>Title of plot.</p>
+</div></blockquote>
+<p><strong>**kwargs</strong></p>
+<blockquote class="last">
+<div><p>Keyword arguments for <code class="docutils literal"><span class="pre">plt.imshow</span></code>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="metatlas.plot_spectrogram">
+<code class="descclassname">metatlas.</code><code class="descname">plot_spectrogram</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>title='Spectrogram for Sample'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metatlas/h5_query.html#plot_spectrogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metatlas.plot_spectrogram" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots a spectrogram.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : array-like</p>
+<blockquote>
+<div><p>X values.</p>
+</div></blockquote>
+<p><strong>y</strong> : array-like</p>
+<blockquote>
+<div><p>Y values.</p>
+</div></blockquote>
+<p><strong>title</strong> : str, optional</p>
+<blockquote>
+<div><p>Title of plot.</p>
+</div></blockquote>
+<p><strong>**kwargs</strong></p>
+<blockquote class="last">
+<div><p>Keyword arguments for <code class="docutils literal"><span class="pre">plt.plot</span></code>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="metatlas.plot_XIC">
+<code class="descclassname">metatlas.</code><code class="descname">plot_XIC</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>title='XIC for Sample'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metatlas/h5_query.html#plot_XIC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metatlas.plot_XIC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots an XIC.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : array-like</p>
+<blockquote>
+<div><p>X values.</p>
+</div></blockquote>
+<p><strong>y</strong> : array-like</p>
+<blockquote>
+<div><p>Y values.</p>
+</div></blockquote>
+<p><strong>title</strong> : str, optional</p>
+<blockquote>
+<div><p>Title of plot.</p>
+</div></blockquote>
+<p><strong>**kwargs</strong></p>
+<blockquote class="last">
+<div><p>Keyword arguments for <code class="docutils literal"><span class="pre">plt.plot</span></code>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="module-metatlas.metatlas_objects">
 <span id="metatlas-objects"></span><h2>Metatlas Objects<a class="headerlink" href="#module-metatlas.metatlas_objects" title="Permalink to this headline">¶</a></h2>
@@ -193,6 +482,23 @@
 <dd>Description of sample.</dd>
 <dt>method <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd>Description of method.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="metatlas.metatlas_objects.FileSpec">
+<em class="property">class </em><code class="descclassname">metatlas.metatlas_objects.</code><code class="descname">FileSpec</code><span class="sig-paren">(</span><em>*args</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metatlas/metatlas_objects.html#FileSpec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metatlas.metatlas_objects.FileSpec" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>polarity <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span></dt>
+<dd>Polarity of ions in file.</dd>
+<dt>group <span class="classifier-delimiter">:</span> <span class="classifier">str, optional</span></dt>
+<dd>Group.</dd>
+<dt>inclusion_order <span class="classifier-delimiter">:</span> <span class="classifier">int, optional</span></dt>
+<dd>Inclusion order.</dd>
+<dt>normalization_factor <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
+<dd>Normalization factor.</dd>
+<dt>retention_correction <span class="classifier-delimiter">:</span> <span class="classifier">float, optional</span></dt>
+<dd>Retention correction factor</dd>
 </dl>
 </dd></dl>
 
