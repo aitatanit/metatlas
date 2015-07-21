@@ -87,7 +87,8 @@
       role="menu"
       aria-labelledby="dLabelLocalToc"><ul>
 <li><a class="reference internal" href="#">API Reference</a><ul>
-<li><a class="reference internal" href="#module-metatlas">Metatlas</a></li>
+<li><a class="reference internal" href="#metatlas">Metatlas</a></li>
+<li><a class="reference internal" href="#module-metatlas.metatlas_objects">Metatlas Objects</a></li>
 </ul>
 </li>
 </ul>
@@ -138,7 +139,8 @@
       <div class="col-md-3">
         <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
 <li><a class="reference internal" href="#">API Reference</a><ul>
-<li><a class="reference internal" href="#module-metatlas">Metatlas</a></li>
+<li><a class="reference internal" href="#metatlas">Metatlas</a></li>
+<li><a class="reference internal" href="#module-metatlas.metatlas_objects">Metatlas Objects</a></li>
 </ul>
 </li>
 </ul>
@@ -149,8 +151,107 @@
       
   <div class="section" id="api-reference">
 <h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-metatlas">
-<span id="metatlas"></span><h2>Metatlas<a class="headerlink" href="#module-metatlas" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="metatlas">
+<h2>Metatlas<a class="headerlink" href="#metatlas" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-metatlas.metatlas_objects">
+<span id="metatlas-objects"></span><h2>Metatlas Objects<a class="headerlink" href="#module-metatlas.metatlas_objects" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="metatlas.metatlas_objects.Compound">
+<em class="property">class </em><code class="descclassname">metatlas.metatlas_objects.</code><code class="descname">Compound</code><span class="sig-paren">(</span><em>*args</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metatlas/metatlas_objects.html#Compound"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metatlas.metatlas_objects.Compound" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>name: str</dt>
+<dd>Name of the compound</dd>
+<dt>formula <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Chemical forumla.</dd>
+<dt>adducts <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Adduct ions.</dd>
+<dt>mz <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Mass-to-charge ratio.</dd>
+<dt>mz_threshold <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Threshold in ppm.</dd>
+<dt>rt_min <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Min retention time (minutes).</dd>
+<dt>rt_max <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Max retention time (minutes).</dd>
+<dt>rt_peak <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>Peak retention time (minutes).</dd>
+<dt>pubchem_id <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Pubchem ID for compound.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="metatlas.metatlas_objects.Atlas">
+<em class="property">class </em><code class="descclassname">metatlas.metatlas_objects.</code><code class="descname">Atlas</code><span class="sig-paren">(</span><em>*args</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metatlas/metatlas_objects.html#Atlas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metatlas.metatlas_objects.Atlas" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>name <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Common name of the atlas.</dd>
+<dt>compounds <span class="classifier-delimiter">:</span> <span class="classifier">list of strings</span></dt>
+<dd>Names of compounds (names of kbase workspace objects).</dd>
+<dt>sample <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Description of sample.</dd>
+<dt>method <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Description of method.</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="metatlas.metatlas_objects.FInfo">
+<em class="property">class </em><code class="descclassname">metatlas.metatlas_objects.</code><code class="descname">FInfo</code><span class="sig-paren">(</span><em>*args</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metatlas/metatlas_objects.html#FInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metatlas.metatlas_objects.FInfo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="metatlas.metatlas_objects.Experiment">
+<em class="property">class </em><code class="descclassname">metatlas.metatlas_objects.</code><code class="descname">Experiment</code><span class="sig-paren">(</span><em>*args</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metatlas/metatlas_objects.html#Experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metatlas.metatlas_objects.Experiment" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>name <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Name of the experiment.</dd>
+<dt>description <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Description of experiment.</dd>
+<dt>reconstitution_method <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Reconstitution method used in experiment.</dd>
+<dt>quenching_method <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Quenching method used in experiment.</dd>
+<dt>extraction_method <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Extraction method used in experiment.</dd>
+<dt>chromatography_method <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Chromatography method used in experiment.</dd>
+<dt>atlases <span class="classifier-delimiter">:</span> <span class="classifier">list of atlases</span></dt>
+<dd>List of atlas objects.</dd>
+<dt>finfos: list of finfos</dt>
+<dd>List of finfo objects.</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="metatlas.metatlas_objects.get_experiment">
+<code class="descclassname">metatlas.metatlas_objects.</code><code class="descname">get_experiment</code><span class="sig-paren">(</span><em>name</em>, <em>username=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/metatlas/metatlas_objects.html#get_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#metatlas.metatlas_objects.get_experiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an experiment by name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>name</strong> : str</p>
+<blockquote>
+<div><p>Name of the experiment.</p>
+</div></blockquote>
+<p><strong>username: str, optional</strong></p>
+<blockquote>
+<div><p>Username of original experimenter.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> : Experiment</p>
+<blockquote class="last">
+<div><p>Experiment object.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 </div>
 

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>metatlas.metatlas_objects &mdash; Metatlas 0.2 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootswatch-3.3.4/cosmo/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="Metatlas 0.2 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body role="document">
+  
+  
+
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          Metatlas</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.2</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../source/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../source/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../source/api.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../source/info.html">Information</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-3">
+        <div id="sidebar" class="bs-sidenav" role="complementary">
+        </div>
+      </div>
+    <div class="col-md-9">
+      
+  <h1>Source code for metatlas.metatlas_objects</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">dataset</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">from</span> <span class="nn">.mzml_loader</span> <span class="kn">import</span> <span class="n">mzml_to_hdf</span>
+<span class="kn">from</span> <span class="nn">IPython.utils.traitlets</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">HasTraits</span><span class="p">,</span> <span class="n">CUnicode</span><span class="p">,</span> <span class="n">CFloat</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">CInt</span><span class="p">,</span> <span class="n">Bool</span><span class="p">,</span> <span class="n">Instance</span><span class="p">)</span>
+
+<span class="n">NERSC_WORKSPACE</span> <span class="o">=</span> <span class="s">&#39;/project/projectdirs/metatlas/workspace&#39;</span>
+
+
+<div class="viewcode-block" id="Compound"><a class="viewcode-back" href="../../source/api.html#metatlas.metatlas_objects.Compound">[docs]</a><span class="k">class</span> <span class="nc">Compound</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    name: str</span>
+<span class="sd">      Name of the compound</span>
+<span class="sd">    formula : str</span>
+<span class="sd">        Chemical forumla.</span>
+<span class="sd">    adducts : str</span>
+<span class="sd">        Adduct ions.</span>
+<span class="sd">    mz : float</span>
+<span class="sd">        Mass-to-charge ratio.</span>
+<span class="sd">    mz_threshold : float</span>
+<span class="sd">        Threshold in ppm.</span>
+<span class="sd">    rt_min : float</span>
+<span class="sd">        Min retention time (minutes).</span>
+<span class="sd">    rt_max : float</span>
+<span class="sd">        Max retention time (minutes).</span>
+<span class="sd">    rt_peak : float</span>
+<span class="sd">        Peak retention time (minutes).</span>
+<span class="sd">    pubchem_id : str</span>
+<span class="sd">        Pubchem ID for compound.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">CUnicode</span><span class="p">()</span>
+    <span class="n">formula</span> <span class="o">=</span> <span class="n">CUnicode</span><span class="p">()</span>
+    <span class="n">adducts</span> <span class="o">=</span> <span class="n">CUnicode</span><span class="p">()</span>
+    <span class="n">mz</span> <span class="o">=</span> <span class="n">CFloat</span><span class="p">()</span>
+    <span class="n">mz_threshold</span> <span class="o">=</span> <span class="n">CFloat</span><span class="p">()</span>
+    <span class="n">rt_min</span> <span class="o">=</span> <span class="n">CFloat</span><span class="p">()</span>
+    <span class="n">rt_max</span> <span class="o">=</span> <span class="n">CFloat</span><span class="p">()</span>
+    <span class="n">rt_peak</span> <span class="o">=</span> <span class="n">CFloat</span><span class="p">()</span>
+    <span class="n">neutral_mass</span> <span class="o">=</span> <span class="n">CFloat</span><span class="p">()</span>
+    <span class="n">pubchem_id</span> <span class="o">=</span> <span class="n">CFloat</span><span class="p">()</span>
+
+</div>
+<div class="viewcode-block" id="Atlas"><a class="viewcode-back" href="../../source/api.html#metatlas.metatlas_objects.Atlas">[docs]</a><span class="k">class</span> <span class="nc">Atlas</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Common name of the atlas.</span>
+<span class="sd">    compounds : list of strings</span>
+<span class="sd">        Names of compounds (names of kbase workspace objects).</span>
+<span class="sd">    sample : str</span>
+<span class="sd">        Description of sample.</span>
+<span class="sd">    method : str</span>
+<span class="sd">        Description of method.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">CUnicode</span><span class="p">()</span>
+    <span class="n">compounds</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span><span class="n">Instance</span><span class="p">(</span><span class="n">Compound</span><span class="p">))</span>
+    <span class="n">sample</span> <span class="o">=</span> <span class="n">CUnicode</span><span class="p">()</span>
+    <span class="n">method</span> <span class="o">=</span> <span class="n">CUnicode</span><span class="p">()</span>
+
+</div>
+<span class="k">class</span> <span class="nc">FileSpec</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    polarity : int, optional</span>
+<span class="sd">        Polarity of ions in file.</span>
+<span class="sd">    group : str, optional</span>
+<span class="sd">        Group.</span>
+<span class="sd">    inclusion_order : int, optional</span>
+<span class="sd">        Inclusion order.</span>
+<span class="sd">    normalization_factor : float, optional</span>
+<span class="sd">        Normalization factor.</span>
+<span class="sd">    retention_correction : float, optional</span>
+<span class="sd">        Retention correction factor</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">polarity</span> <span class="o">=</span> <span class="n">CInt</span><span class="p">()</span>
+    <span class="n">group</span> <span class="o">=</span> <span class="n">CUnicode</span><span class="p">()</span>
+    <span class="n">inclusion_order</span> <span class="o">=</span> <span class="n">CInt</span><span class="p">()</span>
+    <span class="n">normalization_factor</span> <span class="o">=</span> <span class="n">CFloat</span><span class="p">()</span>
+    <span class="n">retention_correction</span> <span class="o">=</span> <span class="n">CFloat</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="FInfo"><a class="viewcode-back" href="../../source/api.html#metatlas.metatlas_objects.FInfo">[docs]</a><span class="k">class</span> <span class="nc">FInfo</span><span class="p">(</span><span class="n">FileSpec</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    mzml_file : str</span>
+<span class="sd">        Path to input_file.</span>
+<span class="sd">    hdf_file : str</span>
+<span class="sd">        Name of the hdf_file.</span>
+<span class="sd">    &quot;&quot;&quot;</span> <span class="o">+</span> <span class="n">FileSpec</span><span class="o">.</span><span class="n">__doc__</span>
+
+    <span class="n">mzml_file</span> <span class="o">=</span> <span class="n">CUnicode</span><span class="p">()</span>
+    <span class="n">hdf_file</span> <span class="o">=</span> <span class="n">CUnicode</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parse a file info spec&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hdf_file</span> <span class="o">=</span> <span class="n">mzml_to_hdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mzml_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hdf_file</span> <span class="ow">or</span> <span class="bp">None</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="Experiment"><a class="viewcode-back" href="../../source/api.html#metatlas.metatlas_objects.Experiment">[docs]</a><span class="k">class</span> <span class="nc">Experiment</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Name of the experiment.</span>
+<span class="sd">    description : str</span>
+<span class="sd">        Description of experiment.</span>
+<span class="sd">    reconstitution_method : str</span>
+<span class="sd">        Reconstitution method used in experiment.</span>
+<span class="sd">    quenching_method : str</span>
+<span class="sd">        Quenching method used in experiment.</span>
+<span class="sd">    extraction_method : str</span>
+<span class="sd">        Extraction method used in experiment.</span>
+<span class="sd">    chromatography_method : str</span>
+<span class="sd">        Chromatography method used in experiment.</span>
+<span class="sd">    atlases : list of atlases</span>
+<span class="sd">        List of atlas objects.</span>
+<span class="sd">    finfos: list of finfos</span>
+<span class="sd">        List of finfo objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">CUnicode</span><span class="p">()</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="n">CUnicode</span><span class="p">()</span>
+    <span class="n">reconstitution_method</span> <span class="o">=</span> <span class="n">CUnicode</span><span class="p">()</span>
+    <span class="n">quenching_method</span> <span class="o">=</span> <span class="n">CUnicode</span><span class="p">()</span>
+    <span class="n">extraction_method</span> <span class="o">=</span> <span class="n">CUnicode</span><span class="p">()</span>
+    <span class="n">chromatography_method</span> <span class="o">=</span> <span class="n">CUnicode</span><span class="p">()</span>
+    <span class="n">atlases</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span><span class="n">Instance</span><span class="p">(</span><span class="n">Atlas</span><span class="p">))</span>
+    <span class="n">finfos</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span><span class="n">Instance</span><span class="p">(</span><span class="n">FInfo</span><span class="p">))</span>
+    <span class="n">_shared</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Save the experiment to the workspace&quot;&quot;&quot;</span>
+        <span class="n">_WORKSPACE</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">share</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Share the experiment&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">load_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">,</span> <span class="n">filespec</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Load a list of files into the experiment</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        files : list of str</span>
+<span class="sd">            List of file paths to load.</span>
+<span class="sd">        filespec: FileSpec</span>
+<span class="sd">            The file spec for the files.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">filespec</span><span class="o">.</span><span class="n">__getstate__</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="n">finfo</span> <span class="o">=</span> <span class="n">FInfo</span><span class="p">(</span><span class="n">mzml_file</span><span class="o">=</span><span class="n">fname</span><span class="p">,</span> <span class="o">**</span><span class="n">state</span><span class="p">)</span>
+            <span class="n">finfo</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">finfos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">finfo</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="get_experiment"><a class="viewcode-back" href="../../source/api.html#metatlas.metatlas_objects.get_experiment">[docs]</a><span class="k">def</span> <span class="nf">get_experiment</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get an experiment by name.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Name of the experiment.</span>
+<span class="sd">    username: str, optional</span>
+<span class="sd">        Username of original experimenter.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    out : Experiment</span>
+<span class="sd">        Experiment object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">username</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span>
+    <span class="k">return</span> <span class="n">_WORKSPACE</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+</div>
+<span class="k">class</span> <span class="nc">_Workspace</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s">&#39;USER&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;.db&#39;</span>
+        <span class="c"># allow for fallback when not on NERC</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">NERSC_WORKSPACE</span><span class="p">):</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">NERSC_WORKSPACE</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s">&#39;sqlite:///</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">path</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="mi">0</span><span class="n">o775</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">experiment</span><span class="p">):</span>
+        <span class="n">top</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">experiment</span><span class="p">)</span>
+        <span class="n">finfos</span> <span class="o">=</span> <span class="p">[</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">experiment</span><span class="o">.</span><span class="n">finfos</span><span class="p">]</span>
+        <span class="n">finfos</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">finfos</span><span class="p">)</span>
+        <span class="n">atlases</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">atlas</span> <span class="ow">in</span> <span class="n">experiment</span><span class="o">.</span><span class="n">atlases</span><span class="p">:</span>
+            <span class="n">compounds</span> <span class="o">=</span> <span class="p">[</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">atlas</span><span class="o">.</span><span class="n">compounds</span><span class="p">]</span>
+            <span class="n">atlases</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">atlas</span><span class="p">)]</span> <span class="o">+</span> <span class="n">compounds</span><span class="p">)</span>
+        <span class="n">atlases</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">atlases</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">[</span><span class="n">experiment</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">top</span><span class="o">=</span><span class="n">top</span><span class="p">,</span> <span class="n">finfos</span><span class="o">=</span><span class="n">finfos</span><span class="p">,</span>
+                                             <span class="n">atlases</span><span class="o">=</span><span class="n">atlases</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="n">objects</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">objects</span><span class="p">:</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">objects</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">experiment</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="s">&#39;top&#39;</span><span class="p">])</span>
+            <span class="n">finfos</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="s">&#39;finfos&#39;</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">finfos</span><span class="p">:</span>
+                <span class="n">finfo</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="n">experiment</span><span class="o">.</span><span class="n">finfos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">finfo</span><span class="p">)</span>
+            <span class="n">atlas_blobs</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="s">&#39;atlases&#39;</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">blob</span> <span class="ow">in</span> <span class="n">atlas_blobs</span><span class="p">:</span>
+                <span class="n">atlas</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">blob</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">experiment</span><span class="o">.</span><span class="n">atlases</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atlas</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">blob</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                    <span class="n">compound</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+                    <span class="n">atlas</span><span class="o">.</span><span class="n">compounds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">compound</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">experiment</span>
+
+
+<span class="c"># Singleton Workspace object</span>
+<span class="n">_WORKSPACE</span> <span class="o">=</span> <span class="n">_Workspace</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015 - 2015, Metatlas contributors.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
