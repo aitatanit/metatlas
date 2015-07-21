@@ -156,17 +156,16 @@ os.environ[&#39;R_LIBS_USER&#39;] = &#39;/project/projectdirs/metatlas/r_pkgs/&#
 Workspace objects will persist between notebooks in a database file.</p>
 <p>You can press SHIFT+TAB to get documentation while accessing the functions, including
 between arguments to the function.</p>
-<dl class="docutils">
-<dt>::</dt>
-<dd>from metatlas import metatlas_objects
-e = metatlas_objects.Experiment(name=&#8217;test6&#8217;)
-c = metatlas_objects.Compound(name=&#8217;hiya&#8217;)
-a = metatlas_objects.Atlas(name=&#8217;what&#8217;, compounds=[c])
-e.atlases.append(a)
-e.save()
-b = metatlas_objects.get_experiment(&#8216;test6&#8217;)
-b.atlases[0].compounds</dd>
-</dl>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">metatlas</span> <span class="kn">import</span> <span class="n">metatlas_objects</span>
+<span class="n">e</span> <span class="o">=</span> <span class="n">metatlas_objects</span><span class="o">.</span><span class="n">Experiment</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;test6&#39;</span><span class="p">)</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">metatlas_objects</span><span class="o">.</span><span class="n">Compound</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;hiya&#39;</span><span class="p">)</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">metatlas_objects</span><span class="o">.</span><span class="n">Atlas</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;what&#39;</span><span class="p">,</span> <span class="n">compounds</span><span class="o">=</span><span class="p">[</span><span class="n">c</span><span class="p">])</span>
+<span class="n">e</span><span class="o">.</span><span class="n">atlases</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="n">e</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">metatlas_objects</span><span class="o">.</span><span class="n">get_experiment</span><span class="p">(</span><span class="s">&#39;test6&#39;</span><span class="p">)</span>
+<span class="n">b</span><span class="o">.</span><span class="n">atlases</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">compounds</span>
+</pre></div>
+</div>
 </div>
 
 
