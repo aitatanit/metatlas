@@ -206,7 +206,7 @@
     <span class="n">retention_correction</span> <span class="o">=</span> <span class="n">CFloat</span><span class="p">()</span>
 
 </div>
-<div class="viewcode-block" id="FInfo"><a class="viewcode-back" href="../../source/api.html#metatlas.metatlas_objects.FInfo">[docs]</a><span class="k">class</span> <span class="nc">FInfo</span><span class="p">(</span><span class="n">FileSpec</span><span class="p">):</span>
+<div class="viewcode-block" id="FileInfo"><a class="viewcode-back" href="../../source/api.html#metatlas.metatlas_objects.FileInfo">[docs]</a><span class="k">class</span> <span class="nc">FileInfo</span><span class="p">(</span><span class="n">FileSpec</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    mzml_file : str</span>
@@ -250,7 +250,7 @@
     <span class="n">extraction_method</span> <span class="o">=</span> <span class="n">CUnicode</span><span class="p">()</span>
     <span class="n">chromatography_method</span> <span class="o">=</span> <span class="n">CUnicode</span><span class="p">()</span>
     <span class="n">atlases</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span><span class="n">Instance</span><span class="p">(</span><span class="n">Atlas</span><span class="p">))</span>
-    <span class="n">finfos</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span><span class="n">Instance</span><span class="p">(</span><span class="n">FInfo</span><span class="p">))</span>
+    <span class="n">finfos</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span><span class="n">Instance</span><span class="p">(</span><span class="n">FileInfo</span><span class="p">))</span>
     <span class="n">_shared</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -273,7 +273,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">state</span> <span class="o">=</span> <span class="n">filespec</span><span class="o">.</span><span class="n">__getstate__</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
-            <span class="n">finfo</span> <span class="o">=</span> <span class="n">FInfo</span><span class="p">(</span><span class="n">mzml_file</span><span class="o">=</span><span class="n">fname</span><span class="p">,</span> <span class="o">**</span><span class="n">state</span><span class="p">)</span>
+            <span class="n">finfo</span> <span class="o">=</span> <span class="n">FileInfo</span><span class="p">(</span><span class="n">mzml_file</span><span class="o">=</span><span class="n">fname</span><span class="p">,</span> <span class="o">**</span><span class="n">state</span><span class="p">)</span>
             <span class="n">finfo</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">finfos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">finfo</span><span class="p">)</span>
 
