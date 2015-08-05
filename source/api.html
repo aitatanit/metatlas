@@ -177,7 +177,8 @@
 </div></blockquote>
 <p><strong>**kwargs</strong></p>
 <blockquote>
-<div><p>Optional search modifiers.  (e.g. min_r=0, max_mz=100, precursor_MZ=1)</p>
+<div><p>Optional search modifiers.  (e.g. min_r=0, max_mz=100, precursor_MZ=1).
+Use verbose=True for displaying query messages.</p>
 </div></blockquote>
 </td>
 </tr>
@@ -452,9 +453,9 @@ and returns the image.</p>
 <dt>name: str</dt>
 <dd>Name of the compound</dd>
 <dt>formula <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>Chemical forumla.</dd>
+<dd>Chemical formula of the intact, neutral form of the molecule.</dd>
 <dt>adducts <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>Adduct ions.</dd>
+<dd>Adduct accounting form the ionization and potential in source degradation.</dd>
 <dt>mz <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
 <dd>Mass-to-charge ratio.</dd>
 <dt>mz_threshold <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
@@ -465,6 +466,8 @@ and returns the image.</p>
 <dd>Max retention time (minutes).</dd>
 <dt>rt_peak <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
 <dd>Peak retention time (minutes).</dd>
+<dt>neutral_mass <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd>The intact, neutral mass of the molecule</dd>
 <dt>pubchem_id <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd>Pubchem ID for compound.</dd>
 </dl>
@@ -479,7 +482,7 @@ and returns the image.</p>
 <dt>compounds <span class="classifier-delimiter">:</span> <span class="classifier">list of strings</span></dt>
 <dd>Names of compounds (names of kbase workspace objects).</dd>
 <dt>sample <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>Description of sample.</dd>
+<dd>Descri 84t4ption of sample.</dd>
 <dt>method <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
 <dd>Description of method.</dd>
 </dl>

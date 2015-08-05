@@ -126,6 +126,8 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">dataset</span>
 <span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">.mzml_loader</span> <span class="kn">import</span> <span class="n">mzml_to_hdf</span>
 <span class="kn">from</span> <span class="nn">IPython.utils.traitlets</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">HasTraits</span><span class="p">,</span> <span class="n">CUnicode</span><span class="p">,</span> <span class="n">CFloat</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">CInt</span><span class="p">,</span> <span class="n">Bool</span><span class="p">,</span> <span class="n">Instance</span><span class="p">)</span>
@@ -133,15 +135,23 @@
 <span class="n">NERSC_WORKSPACE</span> <span class="o">=</span> <span class="s">&#39;/project/projectdirs/metatlas/workspace&#39;</span>
 
 
-<div class="viewcode-block" id="Compound"><a class="viewcode-back" href="../../source/api.html#metatlas.metatlas_objects.Compound">[docs]</a><span class="k">class</span> <span class="nc">Compound</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_MetatlasObject</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">CUnicode</span><span class="p">()</span>
+    <span class="n">unique_id</span> <span class="o">=</span> <span class="n">CInt</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_unique_id_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1e6</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Compound"><a class="viewcode-back" href="../../source/api.html#metatlas.metatlas_objects.Compound">[docs]</a><span class="k">class</span> <span class="nc">Compound</span><span class="p">(</span><span class="n">_MetatlasObject</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    name: str</span>
 <span class="sd">      Name of the compound</span>
 <span class="sd">    formula : str</span>
-<span class="sd">        Chemical forumla.</span>
+<span class="sd">        Chemical formula of the intact, neutral form of the molecule.</span>
 <span class="sd">    adducts : str</span>
-<span class="sd">        Adduct ions.</span>
+<span class="sd">        Adduct accounting form the ionization and potential in source degradation.</span>
 <span class="sd">    mz : float</span>
 <span class="sd">        Mass-to-charge ratio.</span>
 <span class="sd">    mz_threshold : float</span>
@@ -152,10 +162,11 @@
 <span class="sd">        Max retention time (minutes).</span>
 <span class="sd">    rt_peak : float</span>
 <span class="sd">        Peak retention time (minutes).</span>
+<span class="sd">    neutral_mass : float</span>
+<span class="sd">        The intact, neutral mass of the molecule</span>
 <span class="sd">    pubchem_id : str</span>
 <span class="sd">        Pubchem ID for compound.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="n">CUnicode</span><span class="p">()</span>
     <span class="n">formula</span> <span class="o">=</span> <span class="n">CUnicode</span><span class="p">()</span>
     <span class="n">adducts</span> <span class="o">=</span> <span class="n">CUnicode</span><span class="p">()</span>
     <span class="n">mz</span> <span class="o">=</span> <span class="n">CFloat</span><span class="p">()</span>
@@ -164,10 +175,10 @@
     <span class="n">rt_max</span> <span class="o">=</span> <span class="n">CFloat</span><span class="p">()</span>
     <span class="n">rt_peak</span> <span class="o">=</span> <span class="n">CFloat</span><span class="p">()</span>
     <span class="n">neutral_mass</span> <span class="o">=</span> <span class="n">CFloat</span><span class="p">()</span>
-    <span class="n">pubchem_id</span> <span class="o">=</span> <span class="n">CFloat</span><span class="p">()</span>
+    <span class="n">pubchem_id</span> <span class="o">=</span> <span class="n">CUnicode</span><span class="p">()</span>
 
 </div>
-<div class="viewcode-block" id="Atlas"><a class="viewcode-back" href="../../source/api.html#metatlas.metatlas_objects.Atlas">[docs]</a><span class="k">class</span> <span class="nc">Atlas</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
+<div class="viewcode-block" id="Atlas"><a class="viewcode-back" href="../../source/api.html#metatlas.metatlas_objects.Atlas">[docs]</a><span class="k">class</span> <span class="nc">Atlas</span><span class="p">(</span><span class="n">_MetatlasObject</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    name : str</span>
@@ -175,7 +186,7 @@
 <span class="sd">    compounds : list of strings</span>
 <span class="sd">        Names of compounds (names of kbase workspace objects).</span>
 <span class="sd">    sample : str</span>
-<span class="sd">        Description of sample.</span>
+<span class="sd">        Descri 84t4ption of sample.</span>
 <span class="sd">    method : str</span>
 <span class="sd">        Description of method.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -184,8 +195,43 @@
     <span class="n">sample</span> <span class="o">=</span> <span class="n">CUnicode</span><span class="p">()</span>
     <span class="n">method</span> <span class="o">=</span> <span class="n">CUnicode</span><span class="p">()</span>
 
+    <span class="k">def</span> <span class="nf">edit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">qgrid</span>
+        <span class="n">qgrid</span><span class="o">.</span><span class="n">nbinstall</span><span class="p">(</span><span class="n">overwrite</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="kn">from</span> <span class="nn">IPython.html.widgets</span> <span class="kn">import</span> <span class="n">Button</span><span class="p">,</span> <span class="n">HBox</span>
+        <span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
+
+        <span class="c"># create a visualization for the dataframe</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">compounds</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">compounds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Compound</span><span class="p">())</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">_trait_values</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">compounds</span><span class="p">]</span>
+        <span class="n">dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="s">&#39;formula&#39;</span><span class="p">,</span> <span class="s">&#39;adducts&#39;</span><span class="p">,</span> <span class="s">&#39;mz&#39;</span><span class="p">,</span> <span class="s">&#39;mz_threshold&#39;</span><span class="p">,</span>
+                <span class="s">&#39;rt_min&#39;</span><span class="p">,</span> <span class="s">&#39;rt_max&#39;</span><span class="p">,</span> <span class="s">&#39;rt_peak&#39;</span><span class="p">,</span> <span class="s">&#39;neutral_mass&#39;</span><span class="p">,</span>
+                <span class="s">&#39;pubchem_id&#39;</span><span class="p">]</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">qgrid</span><span class="o">.</span><span class="n">QGridWidget</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">dataframe</span><span class="p">[</span><span class="n">cols</span><span class="p">],</span> <span class="n">remote_js</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="n">add_row</span> <span class="o">=</span> <span class="n">Button</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s">&quot;Add Row&quot;</span><span class="p">)</span>
+        <span class="n">add_row</span><span class="o">.</span><span class="n">on_click</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">add_row</span><span class="p">)</span>
+
+        <span class="n">rem_row</span> <span class="o">=</span> <span class="n">Button</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s">&quot;Remove Row&quot;</span><span class="p">)</span>
+        <span class="n">rem_row</span><span class="o">.</span><span class="n">on_click</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">remove_row</span><span class="p">)</span>
+
+        <span class="n">display</span><span class="p">(</span><span class="n">HBox</span><span class="p">((</span><span class="n">add_row</span><span class="p">,</span> <span class="n">rem_row</span><span class="p">)),</span> <span class="n">grid</span><span class="p">)</span>
+
+        <span class="n">grid</span><span class="o">.</span><span class="n">on_msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_incoming_msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_incoming_msg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;add_row&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">compounds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Compound</span><span class="p">())</span>
+        <span class="k">elif</span> <span class="n">msg</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;remove_row&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">compounds</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s">&#39;row&#39;</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">msg</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;cell_change&#39;</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compounds</span><span class="p">[</span><span class="n">msg</span><span class="p">[</span><span class="s">&#39;row&#39;</span><span class="p">]]</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">msg</span><span class="p">[</span><span class="s">&#39;column&#39;</span><span class="p">],</span> <span class="n">msg</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">])</span>
+
 </div>
-<div class="viewcode-block" id="FileSpec"><a class="viewcode-back" href="../../source/api.html#metatlas.metatlas_objects.FileSpec">[docs]</a><span class="k">class</span> <span class="nc">FileSpec</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
+<div class="viewcode-block" id="FileSpec"><a class="viewcode-back" href="../../source/api.html#metatlas.metatlas_objects.FileSpec">[docs]</a><span class="k">class</span> <span class="nc">FileSpec</span><span class="p">(</span><span class="n">_MetatlasObject</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    polarity : int, optional</span>
@@ -233,7 +279,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">hdf_file</span> <span class="o">=</span> <span class="n">mzml_to_hdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mzml_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hdf_file</span> <span class="ow">or</span> <span class="bp">None</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="Experiment"><a class="viewcode-back" href="../../source/api.html#metatlas.metatlas_objects.Experiment">[docs]</a><span class="k">class</span> <span class="nc">Experiment</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
+<div class="viewcode-block" id="Experiment"><a class="viewcode-back" href="../../source/api.html#metatlas.metatlas_objects.Experiment">[docs]</a><span class="k">class</span> <span class="nc">Experiment</span><span class="p">(</span><span class="n">_MetatlasObject</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    name : str</span>
@@ -281,13 +327,65 @@
 <span class="sd">        filespec: FileSpec</span>
 <span class="sd">            The file spec for the files.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">state</span> <span class="o">=</span> <span class="n">filespec</span><span class="o">.</span><span class="n">__getstate__</span><span class="p">()</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="n">filespec</span><span class="o">.</span><span class="n">trait_names</span><span class="p">()</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="n">state</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">filespec</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
             <span class="n">finfo</span> <span class="o">=</span> <span class="n">FileInfo</span><span class="p">(</span><span class="n">mzml_file</span><span class="o">=</span><span class="n">fname</span><span class="p">,</span> <span class="o">**</span><span class="n">state</span><span class="p">)</span>
             <span class="n">finfo</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">finfos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">finfo</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">edit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">qgrid</span>
+        <span class="n">qgrid</span><span class="o">.</span><span class="n">nbinstall</span><span class="p">(</span><span class="n">overwrite</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="kn">from</span> <span class="nn">IPython.html.widgets</span> <span class="kn">import</span> <span class="n">Button</span>
+        <span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span>
+
+        <span class="c"># create a visualization for the dataframe</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">finfos</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Please load files first&#39;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">_trait_values</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">finfos</span><span class="p">]</span>
+        <span class="n">dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="s">&#39;polarity&#39;</span><span class="p">,</span> <span class="s">&#39;group&#39;</span><span class="p">,</span> <span class="s">&#39;inclusion_order&#39;</span><span class="p">,</span>
+                <span class="s">&#39;normalization_factor&#39;</span><span class="p">,</span> <span class="s">&#39;retention_correction&#39;</span><span class="p">]</span>
+
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">qgrid</span><span class="o">.</span><span class="n">QGridWidget</span><span class="p">(</span><span class="n">df</span><span class="o">=</span><span class="n">dataframe</span><span class="p">[</span><span class="n">cols</span><span class="p">],</span> <span class="n">remote_js</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="n">rem_row</span> <span class="o">=</span> <span class="n">Button</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s">&quot;Remove Finfo&quot;</span><span class="p">)</span>
+        <span class="n">rem_row</span><span class="o">.</span><span class="n">on_click</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">remove_row</span><span class="p">)</span>
+
+        <span class="n">display</span><span class="p">(</span><span class="n">rem_row</span><span class="p">,</span> <span class="n">grid</span><span class="p">)</span>
+
+        <span class="n">grid</span><span class="o">.</span><span class="n">on_msg</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_incoming_msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_incoming_msg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">msg</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;remove_row&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">finfos</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="s">&#39;row&#39;</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">msg</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;cell_change&#39;</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">finfos</span><span class="p">[</span><span class="n">msg</span><span class="p">[</span><span class="s">&#39;row&#39;</span><span class="p">]]</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">msg</span><span class="p">[</span><span class="s">&#39;column&#39;</span><span class="p">],</span> <span class="n">msg</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">])</span>
+
 </div>
+<span class="k">def</span> <span class="nf">list_experiments</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get a list of available experiments.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    username: str, optional</span>
+<span class="sd">        Username of original experimenter.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    out : Experiment</span>
+<span class="sd">        Experiment object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">username</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span>
+    <span class="n">experiments</span> <span class="o">=</span> <span class="n">_WORKSPACE</span><span class="o">.</span><span class="n">load_all</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">e</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">experiments</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">Experiment</span><span class="p">)]</span>
+
+
 <div class="viewcode-block" id="get_experiment"><a class="viewcode-back" href="../../source/api.html#metatlas.metatlas_objects.get_experiment">[docs]</a><span class="k">def</span> <span class="nf">get_experiment</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get an experiment by name.</span>
 
@@ -318,36 +416,27 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s">&#39;sqlite:///</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">path</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">chmod</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="mi">0</span><span class="n">o775</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">experiment</span><span class="p">):</span>
-        <span class="n">top</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">experiment</span><span class="p">)</span>
-        <span class="n">finfos</span> <span class="o">=</span> <span class="p">[</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">experiment</span><span class="o">.</span><span class="n">finfos</span><span class="p">]</span>
-        <span class="n">finfos</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">finfos</span><span class="p">)</span>
-        <span class="n">atlases</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">atlas</span> <span class="ow">in</span> <span class="n">experiment</span><span class="o">.</span><span class="n">atlases</span><span class="p">:</span>
-            <span class="n">compounds</span> <span class="o">=</span> <span class="p">[</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">atlas</span><span class="o">.</span><span class="n">compounds</span><span class="p">]</span>
-            <span class="n">atlases</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">atlas</span><span class="p">)]</span> <span class="o">+</span> <span class="n">compounds</span><span class="p">)</span>
-        <span class="n">atlases</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">atlases</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">[</span><span class="n">experiment</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">top</span><span class="o">=</span><span class="n">top</span><span class="p">,</span> <span class="n">finfos</span><span class="o">=</span><span class="n">finfos</span><span class="p">,</span>
-                                             <span class="n">atlases</span><span class="o">=</span><span class="n">atlases</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">obj</span><span class="p">)))</span>
 
     <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="n">objects</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">objects</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">errmsg</span> <span class="o">=</span> <span class="s">&#39;Object called &quot;</span><span class="si">%s</span><span class="s">&quot; not found in database&quot;&#39;</span> <span class="o">%</span> <span class="n">name</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">errmsg</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">objects</span><span class="p">:</span>
             <span class="n">obj</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">objects</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">experiment</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="s">&#39;top&#39;</span><span class="p">])</span>
-            <span class="n">finfos</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="s">&#39;finfos&#39;</span><span class="p">])</span>
-            <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">finfos</span><span class="p">:</span>
-                <span class="n">finfo</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-                <span class="n">experiment</span><span class="o">.</span><span class="n">finfos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">finfo</span><span class="p">)</span>
-            <span class="n">atlas_blobs</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="s">&#39;atlases&#39;</span><span class="p">])</span>
-            <span class="k">for</span> <span class="n">blob</span> <span class="ow">in</span> <span class="n">atlas_blobs</span><span class="p">:</span>
-                <span class="n">atlas</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">blob</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-                <span class="n">experiment</span><span class="o">.</span><span class="n">atlases</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atlas</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">blob</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-                    <span class="n">compound</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
-                    <span class="n">atlas</span><span class="o">.</span><span class="n">compounds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">compound</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">experiment</span>
+            <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">])</span>
 
+    <span class="k">def</span> <span class="nf">load_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">objs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">tables</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">objs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">objs</span>
 
 <span class="c"># Singleton Workspace object</span>
 <span class="n">_WORKSPACE</span> <span class="o">=</span> <span class="n">_Workspace</span><span class="p">()</span>

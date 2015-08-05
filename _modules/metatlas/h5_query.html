@@ -225,7 +225,8 @@
 <span class="sd">    polarity : int</span>
 <span class="sd">        Plus proton (1) or Minus proton (0).</span>
 <span class="sd">    **kwargs</span>
-<span class="sd">        Optional search modifiers.  (e.g. min_r=0, max_mz=100, precursor_MZ=1)</span>
+<span class="sd">        Optional search modifiers.  (e.g. min_r=0, max_mz=100, precursor_MZ=1).</span>
+<span class="sd">        Use verbose=True for displaying query messages.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -262,14 +263,16 @@
 
     <span class="c"># chop off the initial &#39; &amp; &#39;</span>
     <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span>
-    <span class="k">print</span><span class="p">(</span><span class="s">&#39;Querying: </span><span class="si">%s</span><span class="s"> from </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">table</span><span class="o">.</span><span class="n">_v_name</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;verbose&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&#39;Querying: </span><span class="si">%s</span><span class="s"> from </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">table</span><span class="o">.</span><span class="n">_v_name</span><span class="p">))</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">read_where</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;No data found matching criteria&#39;</span><span class="p">)</span>
 
-    <span class="k">print</span><span class="p">(</span><span class="s">&#39;Query complete&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;verbose&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&#39;Query complete&#39;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;i&#39;</span><span class="p">],</span> <span class="n">rt</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;rt&#39;</span><span class="p">],</span> <span class="n">mz</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;mz&#39;</span><span class="p">])</span>
 
