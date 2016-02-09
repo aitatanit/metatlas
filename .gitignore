@@ -66,3 +66,7 @@ narrative/
 kb_auth_do_not_commit.dat
 
 docs/source/api/
+
+metatlas/local_config/
+
+jimmy/

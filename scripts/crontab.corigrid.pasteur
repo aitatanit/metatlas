@@ -1,0 +1,2 @@
+*/10 * * * * /global/project/projectdirs/metatlas/run_dirwatch2.sh
+*/10 * * * * /global/project/projectdirs/metatlas/run_dirwatch.sh >& /global/project/projectdirs/metatlas/dirwatch.log
