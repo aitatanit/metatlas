@@ -1,0 +1,95 @@
+import syssys.path.insert(0,'/global/project/projectdirs/metatlas/anaconda/lib/python2.7/site-packages' )#sys.path.append('/project/projectdirs/metatlas/projects/ms_monitor_tools')import metatlas_get_data_helper_fun as ma_datafrom metatlas import metatlas_objects as metobfrom metatlas import h5_query as h5qfrom metatlas import gui as mgui
+import numpy as np
+
+import os
+
+from IPython.display import display
+
+try:    import ipywidgets as widgetsexcept ImportError:    from IPython.html import widgets
+try:    import qgrid    qgrid.nbinstall(overwrite=True)
+    qgrid.set_grid_option('defaultColumnWidth', 200)except Exception:    print('Could not import QGrid')
+
+from datetime import datetime
+import pandas as pd
+import jsonimport gspreadfrom oauth2client.client import SignedJwtAssertionCredentials
+
+def get_rt_mz_tolerance_from_user():
+    mz_tolerance = float(raw_input('Enter mz tolerance in ppm (ex "20"): ').replace('ppm',''))    rt_tolerance = float(raw_input('Enter the retention time uncertainty in minutes (ex "0.3"): '))
+    return mz_tolerance, rt_tolerance
+
+def get_blank_qc_pos_neg_string():
+    qc_widget = widgets.Text(description="QC ID: ",value='_QC_')    blank_widget = widgets.Text(description="Blank ID:",value = '_BLANK_')    pos_widget = widgets.Text(description="Neg ID: ",value='_NEG_')    neg_widget = widgets.Text(description="Pos ID:",value = '_POS_')    container = widgets.VBox([widgets.HBox([qc_widget, blank_widget]),widgets.HBox([pos_widget, neg_widget])])    display(container)
+    return qc_widget, blank_widget, pos_widget, neg_widget
+
+def get_files_for_experiment(experiment_name):
+    files = metob.retrieve('LcmsRun',username='*',experiment=experiment_name)
+    flist = []    for f in files:        flist.append(f.hdf5_file)        flist = np.unique(flist)
+    df = pd.DataFrame()
+    for counter,f in enumerate(flist):
+        df.loc[counter,'file'] = os.path.basename(f)
+#    del df['index']   
+    df.set_index('file', drop=True, append=False, inplace=True)
+    #df.reset_index(drop=True,inplace=True)
+    
+    options = qgrid.grid.defaults.grid_options
+    options['defaultColumnWidth'] = 600
+    #mygrid = qgrid.show_grid(df, remote_js=True,grid_options = options)
+    grid = qgrid.grid.QGridWidget(df=df,                                  precision=6,                                  grid_options=options,                                  remote_js=True)    def handle_msg(widget, content, buffers=None):        if content['type'] == 'cell_change':            obj = objects[content['row']]            try:                setattr(obj, content['column'], content['value'])            except Exception:                pass    grid.on_msg(handle_msg)
+    gui = widgets.Box([grid])
+    display(gui)  
+    return flist
+
+def get_recent_experiments(num_days):
+    if not num_days:
+        num_days = 5
+    query = 'SELECT DISTINCT experiment,creation_time FROM lcmsruns where creation_time >= UNIX_TIMESTAMP(DATE_SUB(CURDATE(), INTERVAL %d DAY))'%num_days    entries = [e for e in metob.database.query(query)]    df = pd.DataFrame()     counter = 0
+    experiments = []    for entry in entries:        if entry['experiment']:            experiments.append( entry['experiment'] )
+    experiments = np.unique(experiments)    experiment_widget = widgets.Dropdown(        options=list(experiments),        value=experiments[0],        description='Experiments: '
+    )
+    display(experiment_widget)
+    #files = get_files_for_experiment(experiment_widget.value)
+    #def experiment_change(trait,value):
+    #    files = get_files_for_experiment(value)
+    #    return files
+    #experiment_widget.on_trait_change(experiment_change,'value')
+
+    return experiment_widget
+
+def get_files_from_recent_experiment(num_days):
+    if not num_days:
+        num_days = 5
+    query = 'SELECT DISTINCT experiment,creation_time,username FROM lcmsruns where creation_time >= UNIX_TIMESTAMP(DATE_SUB(CURDATE(), INTERVAL %d DAY))'%num_days    entries = [e for e in metob.database.query(query)]    df = pd.DataFrame()     counter = 0    for entry in entries:        if entry['experiment']:            df.loc[counter,'experiment'] = entry['experiment']            df.loc[counter,'username'] = entry['username']            df.loc[counter, 'utc time'] = datetime.utcfromtimestamp(entry['creation_time'])            counter = counter + 1
+    #TODO: filter by unique experiment name
+    #df.drop_duplicates(cols = 'experiment', inplace = True)
+    df.groupby('experiment', group_keys=False)
+    options = qgrid.grid.defaults.grid_options    grid = qgrid.grid.QGridWidget(df=df,                                  precision=6,                                  grid_options=options,                                  remote_js=True)    def handle_msg(widget, content, buffers=None):        if content['type'] == 'cell_change':            obj = objects[content['row']]            try:                setattr(obj, content['column'], content['value'])            except Exception:                pass    grid.on_msg(handle_msg)    return grid    
+    #mygrid = qgrid.show_grid(df, remote_js=True,)
+    #print "Enter the experiment name here"    #my_experiment = raw_input()    #files =  get_files_for_experiment(my_experiment)
+    #files = qgrid.get_selected_rows(mygrid)    
+    #return files
+
+def get_method_dropdown():
+    methods = ['Not Set','6550_HILIC','6520_HILIC','QE_HILIC','6550_RP','6520_RP','QE_RP']
+    method_widget = widgets.Dropdown(        options=methods,        value=methods[0],        description='LC-MS Method:'
+    )
+    display(method_widget)
+
+#    methods_widget.on_trait_change(filter_istd_qc_by_method,'value')
+
+    return method_widget
+
+def get_ms_monitor_reference_data():
+    json_key = json.load(open('/project/projectdirs/metatlas/projects/google_sheets_auth/ipython to sheets demo-9140f8697062.json'))    scope = ['https://spreadsheets.google.com/feeds']    credentials = SignedJwtAssertionCredentials(json_key['client_email'], json_key['private_key'].encode(), scope)    gc = gspread.authorize(credentials)    wks = gc.open("20160203 ms-monitor reference data")    istd_qc_data = wks.worksheet('QC and ISTD').get_all_values()    blank_data = wks.worksheet('BLANK').get_all_values()
+    return istd_qc_data, blank_data
+
+def filter_istd_qc_by_method(method,rt_minutes_tolerance,mz_ppm_tolerance):
+    istd_qc_data, blank_data = get_ms_monitor_reference_data()    lc_method = method.split('_')[1]    ms_method = method.split('_')[0]    column_names = istd_qc_data[0]    use_index = []    for i,cn in enumerate(column_names):        if (lc_method in cn) and (ms_method in cn):            use_index.append(i)    for i,cn in enumerate(column_names):        if 'Permanent Charge' in cn:            use_index.append(i)                for i,cn in enumerate(column_names):        if 'COMMON-HILIC' in cn:            common_hilic_index= i    for i,cn in enumerate(column_names):        if 'ISTD-HILIC' in cn:            istd_hilic_index=i        for i,cn in enumerate(column_names):        if 'QC-HILIC' in cn:            qc_hilic_index=i    def make_dataframe_from_list(present_absent_index,data,rt_mz_intensity_index):        df = pd.DataFrame()        counter = 0                    for compound in data[1:]:            if compound[present_absent_index] == '1':                df.loc[counter,'compound'] = compound[0]                for idx in rt_mz_intensity_index:                    temp_col = column_names[idx].replace(lc_method,'').replace(ms_method,'').replace('_','')                    df.loc[counter,temp_col] = compound[idx]                counter = counter + 1        df.set_index('compound', drop=True, inplace=True)        return df    qc_hilic = make_dataframe_from_list(qc_hilic_index,istd_qc_data,use_index)    istd_hilic = make_dataframe_from_list(istd_hilic_index,istd_qc_data,use_index)    common_hilic = make_dataframe_from_list(common_hilic_index,istd_qc_data,use_index)
+
+    istd_hilic = setup_atlas_values(istd_hilic,rt_minutes_tolerance,mz_ppm_tolerance)    qc_hilic = setup_atlas_values(qc_hilic,rt_minutes_tolerance,mz_ppm_tolerance)    common_hilic = setup_atlas_values(common_hilic,rt_minutes_tolerance,mz_ppm_tolerance)
+    return qc_hilic,common_hilic,istd_hilic
+
+def setup_atlas_values(df,rt_minutes_tolerance,mz_ppm_tolerance):    temp_dict = df.to_dict()['RT']    for compound_name in temp_dict.keys():
+        if temp_dict[compound_name]:            compound = metob.retrieve('Compound',name=compound_name,username='*')[-1]            pos_mz = compound.mono_isotopic_molecular_weight + 1.007276            neg_mz = compound.mono_isotopic_molecular_weight - 1.007276
+            df.loc[compound_name,'pos_mz'] = pos_mz            df.loc[compound_name,'neg_mz'] = neg_mz
+            df.loc[compound_name,'pos_mz_min'] = pos_mz - pos_mz * mz_ppm_tolerance / 1e6            df.loc[compound_name,'pos_mz_max'] = pos_mz + pos_mz * mz_ppm_tolerance / 1e6            df.loc[compound_name,'neg_mz_min'] = neg_mz - neg_mz * mz_ppm_tolerance / 1e6            df.loc[compound_name,'neg_mz_max'] = neg_mz + neg_mz * mz_ppm_tolerance / 1e6
+            df.loc[compound_name,'rt_min'] = float(temp_dict[compound_name]) - rt_minutes_tolerance            df.loc[compound_name,'rt_max'] = float(temp_dict[compound_name]) + rt_minutes_tolerance    return df
